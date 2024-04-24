@@ -155,6 +155,52 @@ server.post('/novo/atracao', async (req, res) => {
         
     });
 
+    server.put('/atualizar/animal', async (req,res) => { 
+        const {nome, idade, genero, envergadura} = req.body;
+        const idAnimal = parseInt(req.query.idAnimal as string);
+
+        const novaAve = new Ave(nome, idade, genero, envergadura);
+
+        const result = await Ave.atualizarAve(novaAve, idAnimal);
+
+        if(result) {
+            res.status(200).json('Ave foi alterado com sucesso');
+        } else {
+            res.status(401).json('Erro ao alterar ave');
+        }
+    })
+
+    server.put('/atualizar/habitat', async (req,res) => { 
+        const {nome} = req.body;
+        const idHabitat = parseInt(req.query.idHabitat as string);
+
+        const novoHabitat = new Habitat(nome);
+
+        const result = await Habitat.atualizarHabitat(novoHabitat, idHabitat );
+
+        if(result) {
+            res.status(200).json('Habitat foi alterado com sucesso');
+        } else {
+            res.status(401).json('Erro ao alterar habitat');
+        }
+    })
+
+    server.put('/atualizar/atracao', async (req,res) => { 
+        const {nome} = req.body;
+        const idAtracao = parseInt(req.query.idAtracao as string);
+
+        const novaAtracao = new Atracao(nome);
+
+        const result = await Atracao.atualizarAtracao(novaAtracao, idAtracao );
+
+        if(result) {
+            res.status(200).json('Atração foi alterado com sucesso');
+        } else {
+            res.status(401).json('Erro ao alterar atração');
+        }
+    })
+
+
 new DatabaseModel().testeConexao().then((resbd) => {
     if(resbd) {
         server.listen(port, () => {

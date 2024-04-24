@@ -197,4 +197,25 @@ export class Atracao {
             return queryResult;
         }
     }
+    static async atualizarAtracao(atracao: Atracao, idAtracao: number): Promise<Boolean> {
+        let queryResult = false;
+
+        try {
+            const queryUpdateAtracao = `UPDATE atracao SET 
+            nomeatracao='${atracao.getNomeAtracao().toUpperCase()}' 
+            WHERE idAtracao=${idAtracao}`;
+            await database.query(queryUpdateAtracao)
+            .then((result)=>{
+                if(result.rowCount !== 0){
+                    queryResult = true;
+                }
+
+            })
+
+        return queryResult;
+        } catch (error) {
+            console.log(`Erro na consulta: ${error}`);
+            return queryResult;
+        }
+    }
 }

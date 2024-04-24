@@ -20,6 +20,7 @@ export class Habitat {
      * A lista de animais que habitam este habitat.
      */
     private listaAnimais: Array<Animal> = [];
+    static getNomeHabitat: any;
 
     /**
      * Cria uma nova instância de Habitat.
@@ -245,6 +246,27 @@ export class Habitat {
             // Exibe o erro no console
             console.log(`Erro na consulta: ${error}`);
             // Retorna a variável queryResult com valor FALSE
+            return queryResult;
+        }
+    }
+    static async atualizarHabitat(habitat: Habitat, idHabitat: number): Promise<Boolean> {
+        let queryResult = false;
+
+        try {
+            const queryUpdateHabitat = `UPDATE habitat SET 
+            nomehabitat='${habitat.getNomeHabitat().toUpperCase()}' 
+            WHERE idHabitat=${idHabitat}`;
+            await database.query(queryUpdateHabitat)
+            .then((result)=>{
+                if(result.rowCount !== 0){
+                    queryResult = true;
+                }
+
+            })
+
+        return queryResult;
+        } catch (error) {
+            console.log(`Erro na consulta: ${error}`);
             return queryResult;
         }
     }
