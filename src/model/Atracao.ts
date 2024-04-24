@@ -156,4 +156,45 @@ export class Atracao {
             return insertResult;
         }
     }
+    static async removerAtracao(idAtracao: number): Promise<boolean> {
+        // Variável para controlar o resultado da função
+        let queryResult = false;
+
+        try {
+            // Query para deletar a atração da tabela habitat
+            const queryDeleteAnimalAtracao= `DELETE FROM habitat WHERE idhabitat=${idAtracao}`;
+
+            // Executando a query
+            await database.query(queryDeleteAnimalAtracao)
+                // Testar o resultado da query
+                .then(async (result) => {
+                    // Se o resultado for diferente de zero, a query foi executada com sucesso
+                    if (result.rowCount != 0) {
+                        // Se a query for executado com sucesso, agora irá remover o habitat tabela habitats
+
+                        // Query para remover o habitat da tabela habitats
+                        const queryDeleteAtracao = `DELETE FROM animal WHERE idanimal=${idAtracao}`;
+                        // Executa a query
+                        await database.query(queryDeleteAtracao)
+                            // Testar o resultado da query
+                            .then((result) => {
+                                // Se o resultado for diferente de zero, a query foi executada com sucesso
+                                if (result.rowCount != 0) {
+                                    // atribui o valor VERDADEIRO a queryResult
+                                    queryResult = true;
+                                }
+                            })
+                    }
+                })
+
+            // Retorna o resultado da função
+            return queryResult;
+            // Caso ocorra algum erro
+        } catch (error) {
+            // Exibe o erro no console
+            console.log(`Erro na consulta: ${error}`);
+            // Retorna a variável queryResult com valor FALSE
+            return queryResult;
+        }
+    }
 }

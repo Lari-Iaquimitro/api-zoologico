@@ -138,7 +138,7 @@ export class Habitat {
      * 
      * @returns Lista com todos os habitats cadastrados e os animais vinculados a eles
      */
-    static async exibirAnimaisPorHabitat(idHabitat: number) : Promise<any> {
+    static async exibirAnimaisPorHabitat(idHabitat: number): Promise<any> {
         try {
             // Retorna todos os animais de um Habitat (informado como parâmetro). Caso o Habitat não tenha nenhum animal é retornado uma lista vazia
             const querySelectHabitatsComAnimais = `
@@ -160,7 +160,7 @@ export class Habitat {
                 ORDER BY
                     h.idHabitat, a.idAnimal;
             `;
-            
+
             const queryReturn = await database.query(querySelectHabitatsComAnimais);
             return queryReturn.rows;
         } catch (error) {
@@ -203,6 +203,49 @@ export class Habitat {
 
             // Caso a inserção no banco der algum erro, é restorno o valor FALSO para quem chamou a função
             return insertResult;
+        }
+    }
+
+
+    static async removerHabitat(idHabitat: number): Promise<boolean> {
+        // Variável para controlar o resultado da função
+        let queryResult = false;
+
+        try {
+            // Query para deletar o habitat da tabela animal
+            const queryDeleteAnimalHabitat = `DELETE FROM animal WHERE idhabitat=${idHabitat}`;
+
+            // Executando a query
+            await database.query(queryDeleteAnimalHabitat)
+                // Testar o resultado da query
+                .then(async (result) => {
+                    // Se o resultado for diferente de zero, a query foi executada com sucesso
+                    if (result.rowCount != 0) {
+                        // Se a query for executado com sucesso, agora irá remover o habitat tabela habitats
+
+                        // Query para remover o habitat da tabela habitats
+                        const queryDeleteHabitat = `DELETE FROM animal WHERE idanimal=${idHabitat}`;
+                        // Executa a query
+                        await database.query(queryDeleteHabitat)
+                            // Testar o resultado da query
+                            .then((result) => {
+                                // Se o resultado for diferente de zero, a query foi executada com sucesso
+                                if (result.rowCount != 0) {
+                                    // atribui o valor VERDADEIRO a queryResult
+                                    queryResult = true;
+                                }
+                            })
+                    }
+                })
+
+            // Retorna o resultado da função
+            return queryResult;
+            // Caso ocorra algum erro
+        } catch (error) {
+            // Exibe o erro no console
+            console.log(`Erro na consulta: ${error}`);
+            // Retorna a variável queryResult com valor FALSE
+            return queryResult;
         }
     }
 }
